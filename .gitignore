@@ -1,0 +1,7 @@
+**/build
+**/.vscode
+**/scripts
+awsconfig.env
+**/__pycache__
+**/.pytest_cache
+packaged.yaml
