@@ -4,6 +4,7 @@ from elasticsearch import Elasticsearch, RequestsHttpConnection
 from requests_aws4auth import AWS4Auth
 
 es_host = os.getenv('ELASTICSEARCH_URL')
+max_data = os.getenv('MAX_DATA')
 
 def lambda_handler(event, context):
     """Sample pure Lambda function
