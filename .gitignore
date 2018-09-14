@@ -1,6 +1,6 @@
 **/build
 **/.vscode
-**/.scripts
+**/scripts
 awsconfig.env
 **/__pycache__
 **/.pytest_cache
