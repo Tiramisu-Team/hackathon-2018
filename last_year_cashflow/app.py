@@ -107,63 +107,17 @@ def lambda_handler(event, context):
     data = es.search(index="debitcard", doc_type="DebitCardType", body=query)
     meses = {}
     for doc in data['hits']['hits']:
-        mes = doc['_source']['EVENT_DT'][:7]
+        mes = doc['_source']['EVENT_DT'][:7] + '-01'
+        monto = float(str.replace(doc['_source']['EVENT_AMT'],",","."))
         if  mes not in meses.keys():
-            meses[mes] = 1
+            meses[mes] = monto
         else:
-            meses[mes] = meses[mes] + 1
-    print(meses)
+            meses[mes] = meses[mes] + monto
+    datos = []
+    for mes in meses:
+        datos.append({"date": mes, "amount": meses[mes]})
     res = {
-        "data": [
-            {
-                "date": "2017-09-01",
-                "amount": 122453.12
-            },
-            {
-                "date": "2017-10-01",
-                "amount": 123449.22
-            },
-            {
-                "date": "2017-11-01",
-                "amount": 125001.43
-            },
-            {
-                "date": "2017-12-01",
-                "amount": 129234.93
-            },
-            {
-                "date": "2018-01-01",
-                "amount": 115023.98
-            },
-            {
-                "date": "2018-02-01",
-                "amount": 97586.43
-            },
-            {
-                "date": "2018-03-01",
-                "amount": 95473.21
-            },
-            {
-                "date": "2018-04-01",
-                "amount": 93212.31
-            },
-            {
-                "date": "2018-05-01",
-                "amount": 84302.13
-            },
-            {
-                "date": "2018-06-01",
-                "amount": 97232.21
-            },
-            {
-                "date": "2018-07-01",
-                "amount": 82012.13
-            },
-            {
-                "date": "2018-08-01",
-                "amount": 79543.10
-            }
-        ]
+        "data": json.dumps(datos)
     }
 
     return {
