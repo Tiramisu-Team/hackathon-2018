@@ -73,9 +73,46 @@ def lambda_handler(event, context):
         https: // docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
     """
     es = Elasticsearch([es_host])
-    data = es.search(index="debitcard", doc_type="DebitCardType", body={"query": {"match": {"DEBIT_CARD_EVENT_TYPE_CD": "20"}}})
+    query = {
+        "size": 1000,
+        "query": {
+            "bool": {
+            "must": [
+                {
+                "match_all": {}
+                },
+                {
+                "range": {
+                    "EVENT_DT": {
+                    "gte": "now-12M",
+                    "lte": "now",
+                    "format": "epoch_millis"
+                    }
+                }
+                },
+                {
+                "match_phrase": {
+                    "MERCHANT_ID.keyword": {
+                    "query": "21623137"
+                    }
+                }
+                }
+            ],
+            "filter": [],
+            "should": [],
+            "must_not": []
+            }
+        }
+    }
+    data = es.search(index="debitcard", doc_type="DebitCardType", body=query)
+    meses = {}
     for doc in data['hits']['hits']:
-        print("%s) %s" % (doc['_id'], doc['_source']['DEBIT_CARD_EVENT_TYPE_CD']))
+        mes = doc['_source']['EVENT_DT'][:7]
+        if  mes not in meses.keys():
+            meses[mes] = 1
+        else:
+            meses[mes] = meses[mes] + 1
+    print(meses)
     res = {
         "data": [
             {
