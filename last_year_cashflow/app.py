@@ -1,6 +1,7 @@
 import json
-#import requests
 import os
+from elasticsearch import Elasticsearch, RequestsHttpConnection
+from requests_aws4auth import AWS4Auth
 
 es_host = os.getenv('ELASTICSEARCH_URL')
 
@@ -71,7 +72,10 @@ def lambda_handler(event, context):
         # api-gateway-simple-proxy-for-lambda-output-format
         https: // docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
     """
-    print(es_host)
+    es = Elasticsearch([es_host])
+    data = es.search(index="debitcard", doc_type="DebitCardType", body={"query": {"match": {"DEBIT_CARD_EVENT_TYPE_CD": "20"}}})
+    for doc in data['hits']['hits']:
+        print("%s) %s" % (doc['_id'], doc['_source']['DEBIT_CARD_EVENT_TYPE_CD']))
     res = {
         "data": [
             {
