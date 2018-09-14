@@ -1,5 +1,8 @@
 import json
 #import requests
+import os
+
+es_host = os.getenv('ELASTICSEARCH_URL')
 
 def lambda_handler(event, context):
     """Sample pure Lambda function
@@ -68,6 +71,7 @@ def lambda_handler(event, context):
         # api-gateway-simple-proxy-for-lambda-output-format
         https: // docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
     """
+    print(es_host)
     res = {
         "data": [
             {
