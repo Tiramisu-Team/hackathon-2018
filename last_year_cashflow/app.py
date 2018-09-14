@@ -1,5 +1,10 @@
 import json
-#import requests
+import os
+from elasticsearch import Elasticsearch, RequestsHttpConnection
+from requests_aws4auth import AWS4Auth
+
+es_host = os.getenv('ELASTICSEARCH_URL')
+max_data = os.getenv('MAX_DATA')
 
 def lambda_handler(event, context):
     """Sample pure Lambda function
@@ -68,57 +73,52 @@ def lambda_handler(event, context):
         # api-gateway-simple-proxy-for-lambda-output-format
         https: // docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
     """
-    res = {
-        "data": [
-            {
-                "date": "2017-09-01",
-                "amount": 122453.12
-            },
-            {
-                "date": "2017-10-01",
-                "amount": 123449.22
-            },
-            {
-                "date": "2017-11-01",
-                "amount": 125001.43
-            },
-            {
-                "date": "2017-12-01",
-                "amount": 129234.93
-            },
-            {
-                "date": "2018-01-01",
-                "amount": 115023.98
-            },
-            {
-                "date": "2018-02-01",
-                "amount": 97586.43
-            },
-            {
-                "date": "2018-03-01",
-                "amount": 95473.21
-            },
-            {
-                "date": "2018-04-01",
-                "amount": 93212.31
-            },
-            {
-                "date": "2018-05-01",
-                "amount": 84302.13
-            },
-            {
-                "date": "2018-06-01",
-                "amount": 97232.21
-            },
-            {
-                "date": "2018-07-01",
-                "amount": 82012.13
-            },
-            {
-                "date": "2018-08-01",
-                "amount": 79543.10
+    es = Elasticsearch([es_host])
+    query = {
+        "size": 1000,
+        "query": {
+            "bool": {
+            "must": [
+                {
+                "match_all": {}
+                },
+                {
+                "range": {
+                    "EVENT_DT": {
+                    "gte": "now-12M",
+                    "lte": "now",
+                    "format": "epoch_millis"
+                    }
+                }
+                },
+                {
+                "match_phrase": {
+                    "MERCHANT_ID.keyword": {
+                    "query": "21623137"
+                    }
+                }
+                }
+            ],
+            "filter": [],
+            "should": [],
+            "must_not": []
             }
-        ]
+        }
+    }
+    data = es.search(index="debitcard", doc_type="DebitCardType", body=query)
+    meses = {}
+    for doc in data['hits']['hits']:
+        mes = doc['_source']['EVENT_DT'][:7] + '-01'
+        monto = float(str.replace(doc['_source']['EVENT_AMT'],",","."))
+        if  mes not in meses.keys():
+            meses[mes] = monto
+        else:
+            meses[mes] = meses[mes] + monto
+    datos = []
+    for mes in meses:
+        datos.append({"date": mes, "amount": meses[mes]})
+    res = {
+        "data": json.dumps(datos)
     }
 
     return {
