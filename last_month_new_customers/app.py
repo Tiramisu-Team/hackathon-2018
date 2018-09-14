@@ -73,7 +73,52 @@ def lambda_handler(event, context):
             {
                 "date": "2017-09-01",
                 "customerCount": 157
+            },
+            {
+                "date": "2017-08-01",
+                "customerCount": 15
+            },
+            {
+                "date": "2017-07-01",
+                "customerCount": 1
+            },
+            {
+                "date": "2017-06-01",
+                "customerCount": 157
+            },
+            {
+                "date": "2017-05-01",
+                "customerCount": 15
+            },
+            {
+                "date": "2017-04-01",
+                "customerCount": 1
+            },
+            {
+                "date": "2017-03-01",
+                "customerCount": 157
+            },
+            {
+                "date": "2017-02-01",
+                "customerCount": 15
+            },
+            {
+                "date": "2017-01-01",
+                "customerCount": 1
+            },
+            {
+                "date": "2016-12-01",
+                "customerCount": 157
+            },
+            {
+                "date": "2016-11-01",
+                "customerCount": 15
+            },
+            {
+                "date": "2016-10-01",
+                "customerCount": 1
             }
+
         ]
     }
 

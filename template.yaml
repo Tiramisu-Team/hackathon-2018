@@ -59,13 +59,13 @@ Outputs:
       Value: !GetAtt LastYearCashflowFunctionRole.Arn
 
     LastMonthNewCustomersApi:
-      Description: "API Gateway endpoint URL for Prod stage for Last Year Cashflow function"
+      Description: "API Gateway endpoint URL for Prod stage for Last Month New Customer function"
       Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/last-month-new-customers/"
 
     LastMonthNewCustomersFunction:
-      Description: "Last Year Cashflow Lambda Function ARN"
+      Description: "Last Month New Customer Function ARN"
       Value: !GetAtt LastMonthNewCustomersFunction.Arn
 
     LastMonthNewCustomersFunctionIamRole:
-      Description: "Implicit IAM Role created for Last Year Cashflow function"
+      Description: "Implicit IAM Role created for Last Month New Customer function"
       Value: !GetAtt LastMonthNewCustomersFunctionRole.Arn
